@@ -23,8 +23,8 @@ function calculateResult (angle, prizes) {
   // console.log(prizes)
   const totalFreqs = getTotalFrequency(prizes) // частота выпадала всех результатов
   let cumulative = 0 // совокупность 1 варинта, шанс выпадения
-  let winner = 0 // было -1
-
+  let winner = -1
+  console.log(angle)
   for (let i = 0; i < prizes.length; ++i) {
     const freq = prizes[i].freq || DEFAULT_FREQUENCY // шанс выпадения из массива или стандарный шанс выпадения
     cumulative += freq
@@ -190,15 +190,15 @@ export default defineComponent({
     }
 
     const spinCompleted = () => {
-      const winner = calculateResult(angle, prizesStore.value)
-      // console.log(prizesStore.value)
+      const winner = calculateResult(angle.value, prizesStore.value)
+      console.log(prizesStore.value)
       emit('result', winner)
     }
 
     const startSpin = () => {
       const prizes = prizesStore.value
 
-      const totalTicks = getRandomInt(1000, 1530) // всего тиков
+      const totalTicks = getRandomInt(400, 530) // всего тиков
       const speed = 0.22 + getRandomInt(0, 80) * 0.001 // скорость
       let ticks = 0
       const start = +new Date()

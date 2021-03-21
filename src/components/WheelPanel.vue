@@ -10,53 +10,56 @@
   </div>
 </template>
 
-<script>
-import Wheel from './Wheel'
-import { mapState } from 'vuex'
-
-export default {
+<script lang="ts">
+import Wheel from './Wheel.vue'
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from '@/store'
+export default defineComponent({
   name: 'WheelPanel',
   components: {
     Wheel
   },
-  data () {
-    return {
-      showRecords: false,
-      spinning: false,
-      spinText: 'Spin!',
-      resultText: 'Ready. Get set.'
+  setup () {
+    const store = useStore()
+    const spinning = ref(false)
+    const spinText = ref('Spin!')
+    const resultText = ref('Ready. Get set.')
+    const wheel: any = ref(null)
+
+    const spins = computed(() => store.state.main.spins)
+    const winningText = computed(() => store.state.main.data.winningText)
+    const prizes = computed(() => store.state.main.available)
+
+    const spinCompleted = index => {
+      const prize = prizes.value[index]
+      spinning.value = false
+      spinText.value = 'Spin again!'
+      resultText.value = winningText.value.replace('%s', prize.name)
     }
-  },
-  computed: mapState({
-    spins: state => state.spins,
-    name: state => state.data.name || 'Wheel of Fortune',
-    winningText: state => state.data.winningText || 'Result: <b>%s</b>',
-    background: state => state.data.background || '',
-    prizes: state => state.available,
-    headerWidth: state => state.size
-  }),
-  methods: {
-    // Called when the Wheel has stopped spinning.
-    spinCompleted (index) {
-      const prize = this.prizes[index]
-      this.spinning = false
-      this.spinText = 'Spin again!'
-      this.resultText = this.winningText.replace('%s', prize.name)
-    },
 
-    // Called by the Spin button. Requests the Wheel to start spinning.
-    startSpin () {
-      if (!this.spinning) {
-        if (this.prizes.length === 0) return
+    const startSpin = () => {
+      if (!spinning.value) {
+        if (prizes.value.length === 0) return
 
-        this.spinning = true
-        this.spinText = 'Spinning...'
-        this.resultText = '&#8203;'
-        this.$refs.wheel.startSpin()
+        spinning.value = true
+        spinText.value = 'Spinning...'
+        resultText.value = '&#8203;'
+        wheel.value.startSpin()
       }
     }
+    return {
+      spinning,
+      spinText,
+      resultText,
+      spins,
+      winningText,
+      prizes,
+      spinCompleted,
+      wheel,
+      startSpin
+    }
   }
-}
+})
 </script>
 
 <style>
