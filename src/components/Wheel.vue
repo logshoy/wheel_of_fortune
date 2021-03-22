@@ -20,11 +20,9 @@ import { useStore } from '@/store'
 // Calculate the resulting prize index given the final angle and list of prizes.
 // Рассчитайте итоговый индекс приза с учетом окончательного угла и списка призов.
 function calculateResult (angle, prizes) {
-  // console.log(prizes)
   const totalFreqs = getTotalFrequency(prizes) // частота выпадала всех результатов
   let cumulative = 0 // совокупность 1 варинта, шанс выпадения
   let winner = -1
-  console.log(angle)
   for (let i = 0; i < prizes.length; ++i) {
     const freq = prizes[i].freq || DEFAULT_FREQUENCY // шанс выпадения из массива или стандарный шанс выпадения
     cumulative += freq
@@ -54,11 +52,10 @@ function isAngleBetween (angle, lower, upper) {
 // Redraw the wheel onto the given canvas, with the given offset angle and list of prizes.
 // Рисует колесо на заданном холсте с заданным углом смещения и списком призов.
 function redrawWheel (canvas, angle, prizes) {
-  const r = Math.min(canvas.width, canvas.height) / 3.35
+  const r = Math.min(canvas.width, canvas.height) / 2.35
   const cx = canvas.width / 2
   const cy = canvas.height / 2
   const ctx = canvas.getContext('2d')
-  // console.log(cx, canvas, ctx)
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   // let g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
@@ -66,11 +63,9 @@ function redrawWheel (canvas, angle, prizes) {
   // g.addColorStop(1, 'rgba(0,0,0,0.1)'); // цвет когда колесо стоит
 
   const totalFreqs = getTotalFrequency(prizes) // частота выпадала всех результатов
-  // console.log(angle)
   let cumulative = 0 // совокупность 1 варинта, шанс выпадения
   for (let i = 0; i < prizes.length; ++i) {
     const prize = prizes[i]
-    // console.log(prize.freq)
     const freq = prize.freq || DEFAULT_FREQUENCY // шанс выпадения из массива или стандарный шанс выпадения
     cumulative += freq
 
@@ -97,7 +92,7 @@ function redrawWheel (canvas, angle, prizes) {
     const angleMod = Math.min(arcAngle2 - arcAngle1, 0.15) // размер шрифта текста
     const lengthMod = 1 - Math.round(prize.name.length / 3) * 0.07
     const fontMod = prize.fontMod || 1
-    const fontSize = Math.max(10, 0.4 * r * angleMod * lengthMod * fontMod)
+    const fontSize = Math.max(10, 0.6 * r * angleMod * lengthMod * fontMod)
 
     // draw text
     // рисуем текст
@@ -111,7 +106,7 @@ function redrawWheel (canvas, angle, prizes) {
     ctx.textBaseline = 'middle'
     ctx.translate(cx, cy)
     ctx.rotate(textAngle) // поворачивания для отрисовки
-    ctx.fillText(prize.name, r * 0.61, 0) // текст и куда рисоватьть текст
+    ctx.fillText(prize.name, r * 0.91, 0) // текст и куда рисоватьть текст
     ctx.restore() // восстанавливает предварительно сохраненное состояние канваса из стека
   }
 }
@@ -119,7 +114,7 @@ function redrawWheel (canvas, angle, prizes) {
 // Redraw the wheel frame onto the given canvas.
 // Перерисовываем рамку колеса на заданном холсте.
 function redrawFrame (canvas) {
-  const r = Math.min(canvas.width, canvas.height) / 3.35
+  const r = Math.min(canvas.width, canvas.height) / 2.35
   const cx = canvas.width / 2
   const cy = canvas.height / 2
   const ctx = canvas.getContext('2d')
@@ -141,7 +136,7 @@ function redrawFrame (canvas) {
   // ctx.shadowOffsetY = r / 200;
   ctx.fillStyle = '#ffffff' // точка в центре
   ctx.beginPath()
-  ctx.arc(cx, cy, r / 10, 0, 2 * Math.PI, false)
+  ctx.arc(cx, cy, r / 4, 0, 2 * Math.PI, false)
   ctx.fill()
 
   // prize pointer
@@ -164,7 +159,7 @@ export default defineComponent({
   setup (_, { emit }) {
     const store = useStore()
     const prizesStore = computed(() => store.state.main.available)
-    const removeWinning = computed(() => store.state.main.data.resizeIntervalId || false)
+    const removeWinning = computed(() => store.state.main.nameWheel || false)
     const angle = ref(0)
     let resizeIntervalId: any = ref(null)
     const mainCanvas: any = ref(null)
@@ -174,9 +169,7 @@ export default defineComponent({
       const pixelRatio = window.devicePixelRatio || 1 // отношение разрешения дисплея текущего устройства в физических пикселях к разрешению в логических (CSS) пикселях.
       const desiredWidth = mainCanvas.value.offsetWidth * pixelRatio // ширина исходя из-за устройства
       const desiredHeight = mainCanvas.value.offsetHeight * pixelRatio
-      // console.log(mainCanvas.value.offsetHeight, desiredHeight)
       // высота исходя из-за устройства
-      // console.log(mainCanvas.value.width, desiredWidth)
       if (mainCanvas.value.width !== desiredWidth || mainCanvas.value.height !== desiredHeight) {
         mainCanvas.value.width = desiredWidth
         mainCanvas.value.height = desiredHeight
@@ -191,7 +184,6 @@ export default defineComponent({
 
     const spinCompleted = () => {
       const winner = calculateResult(angle.value, prizesStore.value)
-      console.log(prizesStore.value)
       emit('result', winner)
     }
 
@@ -222,7 +214,6 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      // console.log(mainCanvas.value.width)
       resizeIntervalId = setInterval(resize, 10)
     })
 

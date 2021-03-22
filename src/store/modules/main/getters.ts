@@ -4,11 +4,11 @@ import { RootState } from '@/store'
 import { State } from './state'
 
 export type Getters = {
-  size (state: State): number;
+  nameWheel (state: State): string;
 }
 
 export const getters: GetterTree<State, RootState> & Getters = {
-  size: state => {
-    return state.size
+  nameWheel: state => {
+    return state.nameWheel
   }
 }

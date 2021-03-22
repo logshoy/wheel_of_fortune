@@ -1,17 +1,19 @@
 <template>
   <div class="main-panel wheel-panel">
+    <h3>{{ nameWhell }}</h3>
       <Wheel ref="wheel" @result="spinCompleted" />
       <div class="wheel-footer-area">
         <div class="wheel-footer">
-          <div class="wheel-result" v-html="resultText"></div>
           <a href="#" class="button" @click.prevent="startSpin">{{ spinText }}</a>
         </div>
       </div>
+      <button @click="openCreateWheelModal" class="button">Создать свой список</button>
   </div>
 </template>
 
 <script lang="ts">
 import Wheel from './Wheel.vue'
+
 import { defineComponent, ref, computed } from 'vue'
 import { useStore } from '@/store'
 export default defineComponent({
@@ -19,22 +21,26 @@ export default defineComponent({
   components: {
     Wheel
   },
-  setup () {
+  emits: ['resultName', 'createWheel'],
+  setup (_, { emit }) {
     const store = useStore()
     const spinning = ref(false)
-    const spinText = ref('Spin!')
-    const resultText = ref('Ready. Get set.')
+    const spinText = ref('КРУТИ')
     const wheel: any = ref(null)
 
-    const spins = computed(() => store.state.main.spins)
-    const winningText = computed(() => store.state.main.data.winningText)
+    const winningText = computed(() => store.state.main.nameWheel)
     const prizes = computed(() => store.state.main.available)
+    const nameWhell = computed(() => store.getters.nameWheel)
 
     const spinCompleted = index => {
       const prize = prizes.value[index]
       spinning.value = false
-      spinText.value = 'Spin again!'
-      resultText.value = winningText.value.replace('%s', prize.name)
+      spinText.value = 'Давай по новой'
+      emit('resultName', prize.name)
+    }
+
+    const openCreateWheelModal = () => {
+      emit('createWheel')
     }
 
     const startSpin = () => {
@@ -42,21 +48,20 @@ export default defineComponent({
         if (prizes.value.length === 0) return
 
         spinning.value = true
-        spinText.value = 'Spinning...'
-        resultText.value = '&#8203;'
+        spinText.value = 'Подожди...'
         wheel.value.startSpin()
       }
     }
     return {
       spinning,
       spinText,
-      resultText,
-      spins,
       winningText,
       prizes,
       spinCompleted,
       wheel,
-      startSpin
+      startSpin,
+      nameWhell,
+      openCreateWheelModal
     }
   }
 })

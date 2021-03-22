@@ -1,25 +1,21 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <!-- <canvas ref="root">This is a root element</canvas> -->
-  <router-view/>
+  <component :is="layout + '-layout'" v-if="layout"/>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { defineComponent, computed } from 'vue'
+
+import MainLayout from '@/layout/MainLayout.vue'
 export default defineComponent({
   setup () {
-    const root: any = ref(null)
-
-    onMounted(() => {
-      // the DOM element will be assigned to the ref after initial render
-      // console.log(root) // <div>This is a root element</div>
-    })
+    const route = useRoute()
     return {
-      root
+      layout: computed(() => route.meta.layout)
     }
+  },
+  components: {
+    MainLayout
   }
 })
 </script>
@@ -62,7 +58,6 @@ input[type='number']:focus {
   background-color: #919499;
   text-decoration: none;
   text-transform: uppercase;
-  text-align: center;
   display: inline-block;
   border-radius: 2px;
   padding: 3px 9px;
@@ -74,6 +69,11 @@ input[type='number']:focus {
   color: #fafcff;
   background-color: #a1a4a9;
 }
+
+li {
+  list-style-type: none;
+}
+
 .button.small {
   text-transform: none;
   padding: 2px 5px;
@@ -82,7 +82,7 @@ input[type='number']:focus {
 .main-panel {
   position: relative;
   min-height: 100%;
-  height: 100vh;
+  height: 55vh;
 }
 .fade-enter-active,
 .fade-leave-active,

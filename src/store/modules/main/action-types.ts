@@ -1,3 +1,3 @@
 export enum MainActionTypes {
-  ADD_SIZE = 'ADD_SIZE'
+  CHANGE_NAME = 'CHANGE_NAME'
 }

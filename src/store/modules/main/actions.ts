@@ -15,14 +15,14 @@ type AugmentedActionContext = {
 } & Omit<ActionContext<State, RootState>, 'commit'>
 
 export interface Actions {
-  [AllActionTypes.ADD_SIZE](
+  [AllActionTypes.CHANGE_NAME](
     { commit }: AugmentedActionContext,
     payload?: any
   ): void
 }
 
 export const actions: ActionTree<State, RootState> & Actions = {
-  [AllActionTypes.ADD_SIZE] ({ commit }) {
-    commit(MutationTypes.CHANGE_SIZE)
+  [AllActionTypes.CHANGE_NAME] ({ commit }) {
+    commit(MutationTypes.CHANGE_NAME)
   }
 }

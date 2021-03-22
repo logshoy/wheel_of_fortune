@@ -1,3 +1,4 @@
 export enum MutationTypes {
-  CHANGE_SIZE = 'CHANGE_SIZE'
+  CHANGE_NAME = 'CHANGE_NAME',
+  CHANGE_PRIZES ='CHANGE_PRIZES'
 }
