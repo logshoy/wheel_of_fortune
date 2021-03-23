@@ -36,17 +36,16 @@ div {
   margin: 0;
   padding: 0;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 input[type='text'],
 input[type='number'] {
-  font-family: 'Muli', sans-serif;
-  font-size: 15px;
-  padding: 5px;
-  background: none;
-  color: #37474f;
-  border: none;
-  border-bottom: 1px solid #b0bec5;
-  transform-origin: left;
-  transition: border-color 0.25s;
+  -moz-appearance: textfield;
 }
 input[type='text']:focus,
 input[type='number']:focus {

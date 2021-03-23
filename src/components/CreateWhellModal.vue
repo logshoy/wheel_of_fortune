@@ -1,50 +1,51 @@
 <template>
-  <input type="text" v-model="nameWheel" placeholder="Название колеса" />
-  <ul>
-    <li class="item-of-Wheel" v-for="(item, index) in itemsOfWhell" :key="index">
-      <input type="text" @change="change" v-model="item.name" placeholder="Название части колеса"/>
-      <div>
-        <!-- <button @click="item.freq+=1">+</button> -->
-        <input type="number" min="1" v-model.number="item.freq">
-        <!-- <button @click="item.freq-=1" min="1">-</button> -->
-        <input type="color" v-model="item.bg" />
-      </div>
-    </li>
-  </ul>
-  <button @click="addItemOfWheel" class="btn_Wheel">+</button>
-  <button @click="createWheel">Создать Колесо</button>
-
+  <form @submit.prevent="createWheel()">
+    <div class="form-control">
+      <input type="text" v-model="nameWheel" placeholder="Название колеса"/>
+    </div>
+    <ul>
+      <li class="item-of-Wheel" v-for="(item, index) in itemsOfWhell" :key="index">
+        <strong>№{{index + 1}}</strong>
+        <div class="form-control">
+          <input type="text" @change="change" v-model="item.name" placeholder="Название части колеса"/>
+        </div>
+          <div>
+            <button type="button" @click="item.freq+=1">+</button>
+            <input class="freq" type="number" min="1" v-model.number="item.freq">
+            <button type="button" @click="item.freq > 1 ? item.freq-=1 : null" min="1">-</button>
+          </div>
+          <input type="color" v-model="item.bg" />
+      </li>
+    </ul>
+    <button type="button" @click="addItemOfWheel" class="btn_Wheel">+</button>
+    <button type="button" @click="createWheel" :disabled="isSubmitting">Создать Колесо</button>
+  </form>
 </template>
 <script lang='ts'>
 import { defineComponent, ref } from 'vue'
 import { useStore } from '@/store'
 import { AllMutationTypes } from '@/store/mutations-type'
-const DEFAULT_ITEM = {
-  name: '',
-  freq: 1,
-  bg: '#e66465'
-}
-
 export default defineComponent({
   emits: ['created'],
   setup (_, { emit }) {
-    const nameWheel = ref('')
-    const itemsOfWhell = ref([DEFAULT_ITEM])
+    const nameWheel = ref('Колесо')
+    const itemsOfWhell = ref([{
+      name: '',
+      freq: 1,
+      bg: '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6)
+    }])
     const store = useStore()
 
     const addItemOfWheel = () => {
       itemsOfWhell.value.push({
         name: '',
         freq: 1,
-        bg: '#e66465'
+        bg: '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6)
       })
     }
-
     const createWheel = () => {
       store.commit(AllMutationTypes.CHANGE_NAME, nameWheel.value)
-      console.log(itemsOfWhell.value)
-      store.commit(AllMutationTypes.CHANGE_PRIZES, itemsOfWhell.value)
-
+      store.commit(AllMutationTypes.CHANGE_PRIZES, [...itemsOfWhell.value])
       emit('created')
     }
 
@@ -61,8 +62,18 @@ export default defineComponent({
 .item-of-Wheel {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
 }
 .btn_Wheel {
   display: flex;
+}
+.freq {
+  width: 10%;
+  text-align: center;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  padding: 0.5rem 0;
+  margin: 0 10px;
 }
 </style>

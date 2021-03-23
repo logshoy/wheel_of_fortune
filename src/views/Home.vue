@@ -2,9 +2,10 @@
   <wheel-panel @createWheel="showModalCreateWheel" @resultName="showWinner" />
   <teleport to="body">
     <app-modal v-if="modalWinner" title='Победитель' @close="modalWinner = false">
-      <div><h4>{{winner}}</h4> </div>
+      <h2>{{winner}}</h2>
+      <button>Сохранить колесо?</button>
     </app-modal>
-    <app-modal v-if="modalCreate" title='Я оглавление' @close="modalCreate = false">
+    <app-modal v-if="modalCreate" title='Я оглавление'>
       <create-wheel-modal @created="modalCreate = false"></create-wheel-modal>
     </app-modal>
   </teleport>
