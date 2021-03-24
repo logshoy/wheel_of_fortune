@@ -7,14 +7,15 @@
       <li class="item-of-Wheel" v-for="(item, index) in itemsOfWhell" :key="index">
         <strong>№{{index + 1}}</strong>
         <div class="form-control">
-          <input type="text" @change="change" v-model="item.name" placeholder="Название части колеса"/>
+          <input type="text" @change="change" v-model="item.name" required placeholder="Название части колеса"/>
         </div>
           <div>
             <button type="button" @click="item.freq+=1">+</button>
-            <input class="freq" type="number" min="1" v-model.number="item.freq">
+            <input class="freq" type="number" min="1" required v-model.number="item.freq">
             <button type="button" @click="item.freq > 1 ? item.freq-=1 : null" min="1">-</button>
           </div>
           <input type="color" v-model="item.bg" />
+          <button type="button" @click="deleteItem(index)">Удалить</button>
       </li>
     </ul>
     <button type="button" @click="addItemOfWheel" class="btn_Wheel">+</button>
@@ -48,12 +49,16 @@ export default defineComponent({
       store.commit(AllMutationTypes.CHANGE_PRIZES, [...itemsOfWhell.value])
       emit('created')
     }
+    const deleteItem = index => {
+      itemsOfWhell.value.splice(index, 1)
+    }
 
     return {
       nameWheel,
       itemsOfWhell,
       addItemOfWheel,
-      createWheel
+      createWheel,
+      deleteItem
     }
   }
 })
