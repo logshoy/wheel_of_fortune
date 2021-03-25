@@ -5,7 +5,7 @@
       <h2>{{winner}}</h2>
       <button>Сохранить колесо?</button>
     </app-modal>
-    <app-modal :class="modal_Whell" v-if="modalCreate" title='Я оглавление'>
+    <app-modal  v-if="modalCreate" title='Я оглавление'>
       <create-wheel-modal @created="modalCreate = false"></create-wheel-modal>
     </app-modal>
   </teleport>

@@ -5,47 +5,48 @@ import { AllMutationTypes } from '../store/mutations-type'
 import { useStore } from '../store'
 
 export function useCreateWheel () {
-  const store = useStore()
-
   const { isSubmitting, handleSubmit } = useForm({
     initialValues: {
-      nameWheel: 'Колесо'
+      nameWheel: 'Колесо',
+      itemsWhell: [{
+        name: '',
+        freq: 1,
+        bg: '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6)
+      }]
     }
   })
+
   const { value: nameWheel, errorMessage: nError, handleBlur: nBlur } = useField<string>(
-    'name',
+    'nameWheel',
     yup.string()
       .trim()
       .required('Введите Название колеса')
   )
-  const { value: itemName, errorMessage: iError, handleBlur: iBlur } = useField<string>(
-    'itemName',
-    yup.string()
-      .trim()
-      .required('Введите название участника')
+  const { value: itemsWhell, errorMessage: iError, handleBlur: iBlur } = useField(
+    'itemsWhell',
+    yup
+      .array()
+      .of(
+        yup.object().shape({
+          name: yup.string().required('Обязательно'),
+          freq: yup.string()
+            .required('Обязательно'),
+          bg: yup.string()
+        })
+      )
+      .strict()
   )
-  const { value: freqItem, errorMessage: fError, handleBlur: fBlur } = useField<number>(
-    'freqItem',
-    yup.number()
-      .required('Введите долю участника')
-      .min(0, 'Доля не может быть меньше 0')
-  )
-  const onSubmit = handleSubmit(async values => {
-    console.table(values)
-    await store.commit(AllMutationTypes.CHANGE_NAME, 'values')
-    // await store.commit(AllMutationTypes.CHANGE_PRIZES, values: any)
-  })
 
+  const onSubmit = handleSubmit(async values => {
+    console.log(values)
+  })
   return {
     nameWheel,
-    itemName,
-    freqItem,
+    itemsWhell,
     nError,
     iError,
-    fError,
     nBlur,
     iBlur,
-    fBlur,
     isSubmitting,
     onSubmit
   }
