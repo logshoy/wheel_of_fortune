@@ -5,22 +5,23 @@
       <small v-if="nError">{{nError}}</small>
     </div>
     <ul>
-      <li class="item-of-Wheel" v-for="(item, index) in itemsWheel" :key="index">
-        <strong>№{{index + 1}}</strong>
+      <li class="item-of-Wheel" v-for="(item, index) in itemsWheel" :key="index" @blur="iBlur">
+        <strong>№ {{index + 1}} </strong>
         <div class="form-control">
           <input type="text" @change="change" v-model="item.name" placeholder="Название части колеса"/>
         </div>
           <div>
             <button type="button" @click="item.freq+=1">+</button>
-            <input class="freq" type="number" min="1" v-model.number="item.freq">
+            <input class="freq" type="number" v-model.number="item.freq">
             <button type="button" @click="item.freq > 1 ? item.freq-=1 : null" min="1">-</button>
           </div>
           <input type="color" v-model="item.bg" />
           <button type="button" @click="deleteItem(index)">Удалить</button>
-          <small v-if="iError">{{iError}}</small>
       </li>
+      <small >{{ iError }}</small>
     </ul>
     <button type="button" @click="addItemOfWheel" class="btn_Wheel">+</button>
+    <button type="button" @click="consoleLog" class="btn_Wheel">Консоль</button>
     <button type="submit" >Создать Колесо</button>
   </form>
 </template>
@@ -58,13 +59,13 @@ export default defineComponent({
         .trim()
         .required('Введите Название колеса')
     )
-    const { value: itemsWheel, errorMessage: iError, handleBlur: iBlur } = useField(
+    const { value: itemsWheel, errorMessage: iError, handleBlur: iBlur } : any = useField(
       'itemsWheel',
       yup
         .array()
         .of(
           yup.object().shape({
-            name: yup.string().required('Обязательно'),
+            name: yup.string().required(),
             freq: yup.number().positive('Не может быть отрицательным').integer('Должно быть целым').required('Обязательно'),
             bg: yup.string()
           })
@@ -73,32 +74,39 @@ export default defineComponent({
     )
 
     const onSubmit = handleSubmit(async values => {
-      console.table(values)
+      console.log(iError)
+      console.log(values.itemsWheel)
     })
+    const consoleLog = () => {
+      console.log(iError)
+    }
 
     const addItemOfWheel = () => {
-      item.push({
-        name: '',
+      console.log(iError)
+      itemsWheel.value.push({
+        name: 'Часть',
         freq: 1,
         bg: '#' + (0x1000000 + (Math.random()) * 0xffffff).toString(16).substr(1, 6)
       })
     }
 
-    // const deleteItem = index => {
-    //   itemsWhell.splice(index, 1)
-    // }
+    const deleteItem = index => {
+      itemsWheel.value.splice(index, 1)
+    }
 
     return {
       addItemOfWheel,
-      // deleteItem,
+      deleteItem,
       nameWheel,
+      item,
       itemsWheel,
       nError,
       iError,
       nBlur,
       iBlur,
       isSubmitting,
-      onSubmit
+      onSubmit,
+      consoleLog
     }
   }
 })
